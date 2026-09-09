@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import {View, Text, Image, Pressable, StyleSheet} from 'react-native'
+import React, {useState, useEffect, useMemo, Component} from 'react'
+import {View, Text, Image, Pressable, StyleSheet, FlatList} from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context' 
 import EtiquetaNivel from './EtiquetaNivel'
@@ -9,11 +9,26 @@ import { CLASES, NIVELES} from '../data/clases'
 import { Color } from 'react-native/types_generated/Libraries/Animated/AnimatedExports'
 import { ScrollView } from 'react-native'
 import NivelChip from '../components/NivelChip'
+import Card from  '../components'
+import useResponsive from '../hooks/useResponsive'
 
 export default function ClasesScreen ({ navigation }){
 
     const[ nivel, setNivel ] = useState('Todos');
     const [ busqueda, setBusqueda] = useState();
+
+    const resultados = useMemo(()=>{
+        const textoBusqueda = busqueda.trim().toLowerCase();
+        return CLASES.filter((clase)=>{
+            const coincideNivel = nivel === 'Todos' || clase.nivel === nivel;
+            const coincidetexto = textoBusqueda || 
+            textoBusqueda === ''||
+            clase.profesor.nombre.toLowerCase().includes(textoBusqueda) ||
+            clase.titulo.toLowerCase().incluides (textoBusqueda)
+            return coincideNivel && coincidetexto
+        })
+    });
+
 
     return(
         <View>
@@ -53,6 +68,21 @@ export default function ClasesScreen ({ navigation }){
                     ))
                 }
             </ScrollView>
+            <FlatList
+                data={resultados}
+                keyExtractor={(item)=> item.id}
+                renderItem={(item)=>(
+                    <Card
+                    clase={item}
+                    onPress={()=> navigation.navigate('DetalleClase', {clase:item})}
+                    />
+                )}
+                contentContainerStyle={{
+                    paddingHorizontal:12,
+                    flexGrow : 1
+                }}
+
+            />
         </View>
     )
 }

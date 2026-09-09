@@ -13,6 +13,13 @@ export default function ClasesStack() {
                 component={ClasesScreen}
                 options={{headerShown: false, title: 'Home'}}
             />
+
+            <Stack.Screen 
+                name="DetalleClase"
+                component={DetalleClaseScreen}
+                options={{title:'Detalle', headerBackTitle: 'Atras'}}
+            />
+
         </Stack.Navigator>
     )
 }
