@@ -10,9 +10,12 @@ import { Color } from 'react-native/types_generated/Libraries/Animated/AnimatedE
 import { ScrollView } from 'react-native'
 import NivelChip from '../components/NivelChip'
 import Card from  '../components'
+import EstadoVacio from '../components/EstadoVacio'
 import useResponsive from '../hooks/useResponsive'
 
 export default function ClasesScreen ({ navigation }){
+    const insets =  useSafeAreaInsets();
+    const {columnas, paddingHorizontal} = useResponsive ();
 
     const[ nivel, setNivel ] = useState('Todos');
     const [ busqueda, setBusqueda] = useState();
@@ -27,8 +30,9 @@ export default function ClasesScreen ({ navigation }){
             clase.titulo.toLowerCase().incluides (textoBusqueda)
             return coincideNivel && coincidetexto
         })
-    });
+    },[coincideNivel,coincidetexto]
 
+);
 
     return(
         <View>
@@ -78,9 +82,21 @@ export default function ClasesScreen ({ navigation }){
                     />
                 )}
                 contentContainerStyle={{
-                    paddingHorizontal:12,
+                    paddingHorizontal,
                     flexGrow : 1
                 }}
+                numColumns={columnas}
+                ListEmptyComponent={
+                    <EstadoVacio
+                    icono="search-outline"
+                    titulo="No encontramoslos resultados"
+                    mensaje= "prueba con otra combinacion de palabras para la busqueda"
+                    OnAction={()=>{
+                        setNivel('Todos');
+                        setBusqueda('');
+                    }}
+                    />
+                }
 
             />
         </View>
