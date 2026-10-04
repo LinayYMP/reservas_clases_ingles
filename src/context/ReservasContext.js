@@ -26,4 +26,32 @@ export function ReservaProvider({children}) {
         };
         cargar();
     },[])
+
+    //guardar  cada vez que cambie  el arreglo de reservas 
+    useEffect (() => {
+        if(cargando) return;
+        AsyncStorage.setItem(CLAVE_RESERVAS, JSON.stringify(reservas)).catch((error)=> 
+            console.log('Error guardando reservas:' error)
+        )
+    }, [reservas, cargando]);
+
+    const agregarReserva = useCallback((clase,horario)=>{
+        const nueva ={
+            id: clase.id + '-' + horario,
+            titulo: clase.titulo,
+            nivel: clase.nivel,
+            profesor: clase.profesor.nombre + ' ' + clase.profesor.apellido,
+            precio: clase.precio,
+            horario,
+            creadoEn: new Date(). toISOString();
+        }
+        let resultados = {ok:true};
+        setReservas ((prev) => {
+            if(prev.some((r)=>r.id === nueva.id)){
+                resultados = {ok: false}
+                return prev; 
+            }
+            return [nueva, ...prev]
+        })
+    },[]);
 }

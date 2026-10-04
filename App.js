@@ -21,8 +21,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ReservasProvider>
-        <NavigationContainer>
-          <ClasesStack />
+        <NavigationContainer theme={temaNavegacion}>
+        <Statusbar style="dark" />
+        <ClasesStack />
         </NavigationContainer>
       </ReservasProvider>
       <StatusBar style="auto" />
