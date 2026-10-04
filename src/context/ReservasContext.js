@@ -35,30 +35,36 @@ export function ReservaProvider({children}) {
         )
     }, [reservas, cargando]);
 
+    //devuelve {ok: true} si se guardo, o {ok: false, mensaje} para mostrarle al usuario por que no
     const agregarReserva = useCallback((clase,horario)=>{
         const nueva ={
             id: clase.id + '-' + horario,
+            claseId: clase.id,
             titulo: clase.titulo,
             nivel: clase.nivel,
-            profesor: clase.profesor.nombre + ' ' + clase.profesor.apellido,
+            profesor: clase.profesor.nombre,
             precio: clase.precio,
+            duracion: clase.duracion,
             horario,
             creadoEn: new Date().toISOString(),
         }
-        let resultados = {ok:true};
-        setReservas ((prev) => {
-            if(prev.some((r)=>r.id === nueva.id)){
-                resultados = {ok: false}
-                return prev; 
-            }
-            return [nueva, ...prev]
-        })
+
+        if(reservas.some((r)=>r.id === nueva.id)){
+            return {ok: false, mensaje: 'Ya tienes reservada esta clase en ese horario.'};
+        }
+
+        setReservas((prev) => [nueva, ...prev]);
+        return {ok: true};
+    },[reservas]);
+
+    const cancelarReserva = useCallback((id)=>{
+        setReservas((prev) => prev.filter((r)=> r.id !== id));
     },[]);
 
     //lo que compartimos con todas las pantallas que esten dentro del provider
     const valor = useMemo(
-        () => ({reservas, cargando, agregarReserva}),
-        [reservas, cargando, agregarReserva]
+        () => ({reservas, cargando, agregarReserva, cancelarReserva}),
+        [reservas, cargando, agregarReserva, cancelarReserva]
     );
 
     return (
