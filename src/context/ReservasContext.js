@@ -1,26 +1,29 @@
-import React, {createContext, useContext, useState} from "react";
-import { CLASES } from "../data/clases";
+import React, {useState, useEffect, useCallback, useMemo, createContext} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-//Guarda los cupos de cada clase para que no se reinicien al salir de la pantalla de detalle
+const CLAVE_RESERVAS  =  '@reservas_ingles';
 
-const ReservasContext = createContext(null);
+export const ReservasContext = createContext(null);
 
-const cuposIniciales = Object.fromEntries(CLASES.map((clase) => [clase.id, clase.cupos]));
+export function ReservaProvider({children}) {
+    const [reservas, setReservas] = useState([]);
+    const [cargando, setCargando] = useState (true);
 
-export function ReservasProvider ({children}) {
-    const [cuposPorClase, setCuposPorClase] = useState(cuposIniciales);
+    //cargar las reaervas que tengo guardadas, si no tengo nada me devuelve un arreglo vacio 
 
-    const reservarCupo = (id) => {
-        setCuposPorClase((actual) => ({...actual, [id]: Math.max(actual[id] - 1, 0)}));
-    };
-
-    return (
-        <ReservasContext.Provider value={{cuposPorClase, reservarCupo}}>
-            {children}
-        </ReservasContext.Provider>
-    );
-}
-
-export function useReservas () {
-    return useContext(ReservasContext);
+    useEffect (()=>{
+        const cargar = async () => {
+            try {
+                const guardado = await AsyncStorage.getItem(CLAVE_RESERVAS);
+                if(guardado !== null) {
+                    setReservas(JSON.parse(guardado))
+                }
+            }catch (error) {
+                console.log ('error leyendo  reservas:' , error);
+            }finally{
+                setCargando(false)
+            }
+        };
+        cargar();
+    },[])
 }
