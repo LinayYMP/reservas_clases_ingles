@@ -31,7 +31,7 @@ export function ReservaProvider({children}) {
     useEffect (() => {
         if(cargando) return;
         AsyncStorage.setItem(CLAVE_RESERVAS, JSON.stringify(reservas)).catch((error)=> 
-            console.log('Error guardando reservas:' error)
+            console.log('Error guardando reservas:', error)
         )
     }, [reservas, cargando]);
 
@@ -43,7 +43,7 @@ export function ReservaProvider({children}) {
             profesor: clase.profesor.nombre + ' ' + clase.profesor.apellido,
             precio: clase.precio,
             horario,
-            creadoEn: new Date(). toISOString();
+            creadoEn: new Date().toISOString(),
         }
         let resultados = {ok:true};
         setReservas ((prev) => {
@@ -54,4 +54,16 @@ export function ReservaProvider({children}) {
             return [nueva, ...prev]
         })
     },[]);
+
+    //lo que compartimos con todas las pantallas que esten dentro del provider
+    const valor = useMemo(
+        () => ({reservas, cargando, agregarReserva}),
+        [reservas, cargando, agregarReserva]
+    );
+
+    return (
+        <ReservasContext.Provider value={valor}>
+            {children}
+        </ReservasContext.Provider>
+    );
 }
