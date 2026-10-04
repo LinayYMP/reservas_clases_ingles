@@ -1,16 +1,24 @@
 import react from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons} from "@expo/vector-icons";
-import { useColorScheme, spacing, colors } from "../theme";
+import { spacing, colors, radius } from "../theme";
 
-export default function EstadoVacio ({icono='calendar-outline', titulo, mensaje, OnAction}) {
+export default function EstadoVacio ({icono='calendar-outline', titulo, mensaje, textoAccion='Limpiar filtros', OnAction}) {
     return (
     <View style={styles.contenedor}>
-        <View style={style.circulo}>
+        <View style={styles.circulo}>
             <Ionicons name={icono} size={34} color={colors.primario}/>
         </View>
-        <Text style={style.titulo}>{titulo}</Text>
-        <Text style={style.mensaje}>{mensaje}</Text>
+        <Text style={styles.titulo}>{titulo}</Text>
+        <Text style={styles.mensaje}>{mensaje}</Text>
+        {OnAction && (
+            <Pressable
+                onPress={OnAction}
+                style={({pressed}) => [styles.boton, pressed && {opacity: 0.8}]}
+            >
+                <Text style={styles.textoBoton}>{textoAccion}</Text>
+            </Pressable>
+        )}
     </View>
 )}
 
@@ -39,4 +47,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     lineHeight: 20,
   },
+  boton: {
+    marginTop: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radius.full,
+    backgroundColor: colors.primario,
+  },
+  textoBoton: { fontSize: 15, fontWeight: '700', color: '#fff' },
 });

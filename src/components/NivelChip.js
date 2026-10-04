@@ -12,7 +12,7 @@ export default function NivelChip ({etiqueta, activo, onPress}){
                 pressed && {opacity:0.7}
             ]}
         >
-            <Text style={[style.texto, activo && style.textoActivo]}></Text>
+            <Text style={[style.texto, activo && style.textoActivo]}>{etiqueta}</Text>
         </Pressable>
     )
 }

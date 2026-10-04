@@ -1,9 +1,9 @@
 import react from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ClasesScreen from "../screens/ClasesScreen";
-import { Stack } from "expo-router";
+import ClasesScreen from "../screens/ClasesScreens";
+import DetalleClaseScreen from "../screens/DetalleClaseScreen";
 
-const stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function ClasesStack() {
     return (

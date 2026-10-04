@@ -13,7 +13,7 @@ export const CLASES = [
     duracion: 50,
     modalidad: 'Virtual',
     rating: 4.8,
-    cupos: 6,
+    cupos: 8,
     horarios: ['Lun 7:00 a.m.', 'Mié 7:00 a.m.', 'Vie 6:00 p.m.'],
   },
   {
@@ -28,7 +28,7 @@ export const CLASES = [
     duracion: 60,
     modalidad: 'Virtual',
     rating: 4.9,
-    cupos: 4,
+    cupos: 8,
     horarios: ['Mar 6:00 p.m.', 'Jue 6:00 p.m.', 'Sáb 10:00 a.m.'],
   },
   {
@@ -43,7 +43,7 @@ export const CLASES = [
     duracion: 60,
     modalidad: 'Presencial',
     rating: 4.7,
-    cupos: 3,
+    cupos: 8,
     horarios: ['Lun 8:00 p.m.', 'Mié 8:00 p.m.'],
   },
   {
@@ -73,7 +73,7 @@ export const CLASES = [
     duracion: 45,
     modalidad: 'Virtual',
     rating: 4.9,
-    cupos: 5,
+    cupos: 8,
     horarios: ['Lun 5:00 p.m.', 'Vie 5:00 p.m.'],
   },
   {
@@ -88,7 +88,7 @@ export const CLASES = [
     duracion: 60,
     modalidad: 'Presencial',
     rating: 4.8,
-    cupos: 4,
+    cupos: 8,
     horarios: ['Mié 6:00 a.m.', 'Vie 6:00 a.m.'],
   },
   {
@@ -103,7 +103,7 @@ export const CLASES = [
     duracion: 45,
     modalidad: 'Virtual',
     rating: 4.5,
-    cupos: 10,
+    cupos: 8,
     horarios: ['Jue 7:00 p.m.', 'Sáb 11:00 a.m.'],
   },
   {
@@ -118,7 +118,7 @@ export const CLASES = [
     duracion: 45,
     modalidad: 'Virtual',
     rating: 4.7,
-    cupos: 7,
+    cupos: 8,
     horarios: ['Mar 8:00 p.m.', 'Sáb 8:00 a.m.'],
   },
 ];

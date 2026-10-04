@@ -1,21 +1,23 @@
 import React from 'react'
-import {view, Text, StyleSheet} from 'react-native'
-import {colors, spacing, radius, typography} from '../theme'
+import {View, Text, StyleSheet} from 'react-native'
+import {colors, spacing, radius} from '../theme'
 
 export default function EtiquetaNivel({ nivel }){
     return (
-        <view style={[styles.contenedor, {backgroundColor: colors.fondo}]}> 
-            <Text style= {styles.texto}> { nivel } </Text>
-        </view>
+        <View style={[styles.contenedor, {backgroundColor: colors.fondo}]}>
+            <Text style= {styles.texto}>{nivel}</Text>
+        </View>
     )
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
     contenedor:{
-        alignSelf: 'auto',
+        alignSelf: 'flex-start',
         paddingVertical: 3,
         paddingHorizontal: spacing.md,
-        borderWidth: 1
+        borderWidth: 1,
+        borderColor: colors.borde,
+        borderRadius: radius.full,
     },
-    texto:{fontSize: 11, fontWeight: '700', letterSpacing: 0.3}
+    texto:{fontSize: 11, fontWeight: '700', letterSpacing: 0.3, color: colors.texto}
 })
