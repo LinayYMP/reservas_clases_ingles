@@ -89,7 +89,7 @@ export const CLASES = [
     modalidad: 'Presencial',
     rating: 4.8,
     cupos: 8,
-    horarios: ['Mié 6:00 a.m.', 'Vie 6:00 a.m.'],
+    horarios: ['Mié 6:30 a.m.', 'Vie 6:00 a.m.'],
   },
   {
     id: '7',
@@ -125,3 +125,25 @@ export const CLASES = [
  
 export const formatearPrecio = (valor) =>
   '$' + valor.toLocaleString('es-CO') + ' COP';
+
+// Convierte 'Mié 6:30 a.m.' en { dia: 'Mié', inicio: 390 }
+// inicio = minutos desde la medianoche, asi es facil comparar horas
+export const convertirHorario = (horario) => {
+  const [dia, hora, periodo] = horario.split(' ');
+  let [horas, minutos] = hora.split(':').map(Number);
+  if (periodo === 'p.m.' && horas !== 12) horas += 12;
+  if (periodo === 'a.m.' && horas === 12) horas = 0;
+  return { dia, inicio: horas * 60 + minutos };
+};
+
+// Recibe dos objetos con { horario, duracion } y dice si sus horarios se cruzan:
+// mismo dia y uno empieza antes de que el otro termine
+export const seCruzan = (a, b) => {
+  const horarioA = convertirHorario(a.horario);
+  const horarioB = convertirHorario(b.horario);
+  if (horarioA.dia !== horarioB.dia) return false;
+
+  const finA = horarioA.inicio + a.duracion;
+  const finB = horarioB.inicio + b.duracion;
+  return horarioA.inicio < finB && horarioB.inicio < finA;
+};

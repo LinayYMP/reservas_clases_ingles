@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback, useMemo, createContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CLASES } from '../data/clases';
+import { CLASES, seCruzan } from '../data/clases';
 
 const CLAVE_RESERVAS  =  '@reservas_ingles';
 
@@ -67,6 +67,12 @@ export function ReservaProvider({children}) {
 
         if(reservas.some((r)=>r.id === nueva.id)){
             return {ok: false, mensaje: 'Ya tienes reservada esta clase en ese horario.'};
+        }
+
+        //no se puede reservar si choca con otra reserva que ya tenga el usuario
+        const conflicto = reservas.find((r) => seCruzan(r, nueva));
+        if(conflicto){
+            return {ok: false, mensaje: `Se cruza con ${conflicto.titulo} (${conflicto.horario}).`};
         }
 
         setReservas((prev) => [nueva, ...prev]);
