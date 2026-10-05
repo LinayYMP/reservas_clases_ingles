@@ -30,4 +30,7 @@ export default function useAlmacenamiento(clave, valorInicial){
             }
         }, [clave]
     );
+
+    //igual que useState: [valor, funcionParaCambiarlo], y listo indica si ya se leyo lo guardado
+    return [valor, actualizar, listo];
 };
