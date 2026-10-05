@@ -20,7 +20,13 @@
     },
     "plugins": [
       "expo-status-bar",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "La app necesita acceder a tus fotos para elegir tu foto de perfil."
+        }
+      ]
     ],
     "extra": {
       "eas": {
