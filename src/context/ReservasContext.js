@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useCallback, useMemo, createContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CLASES } from '../data/clases';
 
 const CLAVE_RESERVAS  =  '@reservas_ingles';
 
@@ -35,6 +36,17 @@ export function ReservaProvider({children}) {
         )
     }, [reservas, cargando]);
 
+    //cupos disponibles de cada clase = cupos totales - reservas hechas de esa clase
+    //ej: { '1': 8, '2': 7, ... }. Al cancelar una reserva el cupo se recupera solo
+    const cuposPorClase = useMemo(() => {
+        const cupos = {};
+        CLASES.forEach((clase) => {
+            const reservadas = reservas.filter((r) => r.claseId === clase.id).length;
+            cupos[clase.id] = clase.cupos - reservadas;
+        });
+        return cupos;
+    }, [reservas]);
+
     //devuelve {ok: true} si se guardo, o {ok: false, mensaje} para mostrarle al usuario por que no
     const agregarReserva = useCallback((clase,horario)=>{
         const nueva ={
@@ -49,13 +61,17 @@ export function ReservaProvider({children}) {
             creadoEn: new Date().toISOString(),
         }
 
+        if(cuposPorClase[clase.id] <= 0){
+            return {ok: false, mensaje: 'Ya no hay más cupos disponibles para esta clase.'};
+        }
+
         if(reservas.some((r)=>r.id === nueva.id)){
             return {ok: false, mensaje: 'Ya tienes reservada esta clase en ese horario.'};
         }
 
         setReservas((prev) => [nueva, ...prev]);
         return {ok: true};
-    },[reservas]);
+    },[reservas, cuposPorClase]);
 
     const cancelarReserva = useCallback((id)=>{
         setReservas((prev) => prev.filter((r)=> r.id !== id));
@@ -63,8 +79,8 @@ export function ReservaProvider({children}) {
 
     //lo que compartimos con todas las pantallas que esten dentro del provider
     const valor = useMemo(
-        () => ({reservas, cargando, agregarReserva, cancelarReserva}),
-        [reservas, cargando, agregarReserva, cancelarReserva]
+        () => ({reservas, cargando, cuposPorClase, agregarReserva, cancelarReserva}),
+        [reservas, cargando, cuposPorClase, agregarReserva, cancelarReserva]
     );
 
     return (

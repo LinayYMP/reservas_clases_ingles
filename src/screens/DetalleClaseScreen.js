@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, ScrollView, StyleSheet, Alert, Pressable, Platform } from "react-native";
 import { Ionicons} from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useResponsive from '../hooks/useResponsive'
 import EtiquetaNivel from '../components/EtiquetaNivel'
 import { formatearPrecio } from '../data/clases'
-import { useReservas } from '../context/ReservasContext'
+import useReserva from '../hooks/useReserva'
 import { colors, spacing, radius, typography, sombra } from "../theme";
 
 //En web Alert.alert no muestra nada, por eso ahí se usa window.alert
@@ -23,9 +23,12 @@ export default function DetalleClaseScreen ({route, navigation}) {
     const {esTablet, paddingHorizontal} = useResponsive();
     const {clase} = route.params;
 
-    const {cuposPorClase, reservarCupo} = useReservas();
+    const {cuposPorClase, agregarReserva} = useReserva();
     const cupos = cuposPorClase[clase.id];
-    const sinCupos = cupos === 0;
+    const sinCupos = cupos <= 0;
+
+    //horario que el usuario toco; null mientras no haya elegido ninguno
+    const [horarioSeleccionado, setHorarioSeleccionado] = useState(null);
 
     const reservarClase = () => {
         if (sinCupos) {
@@ -33,10 +36,23 @@ export default function DetalleClaseScreen ({route, navigation}) {
             return;
         }
 
-        reservarCupo(clase.id);
+        if (!horarioSeleccionado) {
+            mostrarAlerta('Selecciona un horario', 'Toca uno de los horarios disponibles antes de reservar.');
+            return;
+        }
 
+        //el context valida y nos dice si se pudo reservar
+        const resultado = agregarReserva(clase, horarioSeleccionado);
+        if (!resultado.ok) {
+            mostrarAlerta('No se pudo reservar', resultado.mensaje);
+            return;
+        }
+
+        setHorarioSeleccionado(null);
         if (cupos - 1 === 0) {
-            mostrarAlerta('Sin cupos', 'Reservaste el último cupo. Ya no hay más cupos disponibles.');
+            mostrarAlerta('Reserva confirmada', 'Reservaste el último cupo. Ya no hay más cupos disponibles.');
+        } else {
+            mostrarAlerta('Reserva confirmada', `${clase.titulo}\n${horarioSeleccionado}`);
         }
     };
 
@@ -84,15 +100,22 @@ export default function DetalleClaseScreen ({route, navigation}) {
                         </View>
                     </View>
 
-                    {/* horarios */}
-                    <Text style={styles.subtitulo}>Horarios</Text>
+                    {/* horarios: se pueden seleccionar para reservar */}
+                    <Text style={styles.subtitulo}>Elige un horario</Text>
                     <View style={styles.horarios}>
-                        {clase.horarios.map((horario) => (
-                            <View key={horario} style={styles.horario}>
-                                <Ionicons name="calendar-outline" size={16} color={colors.primario} />
-                                <Text style={styles.textoHorario}>{horario}</Text>
-                            </View>
-                        ))}
+                        {clase.horarios.map((horario) => {
+                            const seleccionado = horario === horarioSeleccionado;
+                            return (
+                                <Pressable
+                                    key={horario}
+                                    onPress={() => setHorarioSeleccionado(horario)}
+                                    style={[styles.horario, seleccionado && styles.horarioSeleccionado]}
+                                >
+                                    <Ionicons name="calendar-outline" size={16} color={seleccionado ? '#fff' : colors.primario} />
+                                    <Text style={[styles.textoHorario, seleccionado && {color: '#fff'}]}>{horario}</Text>
+                                </Pressable>
+                            );
+                        })}
                     </View>
                 </View>
             </ScrollView>
@@ -165,6 +188,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.borde,
     },
+    horarioSeleccionado: {backgroundColor: colors.primario, borderColor: colors.primario},
     textoHorario: {fontSize: 14, fontWeight: '600', color: colors.texto},
     footer: {
         position: 'absolute',
